@@ -400,6 +400,14 @@ def cmd_patch_dsh(args):
             dst.write(src.read())
         os.chmod(tmp, 0o644)
         os.replace(tmp, target)
+    if "antigravity-provider.diff" in applied:
+        source = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "antigravity", "provider.mjs")
+        target = os.path.join(args.prefix, "node_modules", "@deepseek-ai", "dsh-llm-pi-ai", "lib", "dsh-go-antigravity.mjs")
+        tmp = target + ".dsh-app-patch"
+        with open(source, "rb") as src, open(tmp, "wb") as dst:
+            dst.write(src.read())
+        os.chmod(tmp, 0o644)
+        os.replace(tmp, target)
     if args.out:
         with open(args.out, "w") as f:
             json.dump(applied, f)

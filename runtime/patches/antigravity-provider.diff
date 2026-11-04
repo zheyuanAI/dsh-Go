@@ -1,0 +1,12 @@
+--- a/node_modules/@deepseek-ai/dsh-llm-pi-ai/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-llm-pi-ai/lib/index.js
+@@ -1,1 +1,2 @@
+-import { launchEnvironmentOf } from "@deepseek-ai/dsh-launch-environment";
++import { antigravityProvider } from "./dsh-go-antigravity.mjs";
++import { launchEnvironmentOf } from "@deepseek-ai/dsh-launch-environment";
+@@ -361,1 +362,1 @@
+-	providerIndex ??= new Map(builtinProviders().filter(servesChat).map((provider) => [provider.id, provider]));
++	providerIndex ??= new Map([...builtinProviders().filter(servesChat), antigravityProvider()].map((provider) => [provider.id, provider]));
+@@ -389,1 +390,1 @@
+-	const models = getBuiltinModels(provider);
++	const models = provider === "google-antigravity" ? catalogProvider(provider).getModels() : getBuiltinModels(provider);

@@ -269,6 +269,14 @@
           "after": "ff1c3fc024dfc3520c8b3a89cefae95e3e71b38e5437abb42553681eb1d89cc2"
         }
       }
+    },
+    "antigravity-provider.diff": {
+      "0.2.1-rc.4": {
+        "node_modules/@deepseek-ai/dsh-llm-pi-ai/lib/index.js": {
+          "after": "2c058679a5fb88c13c9868788ffab7b92b03130afa714861cb4f60e8a01da7f6",
+          "before": "99b5c20830a52f69641df8a18a39206079b0c725201958cce2c4a934f1d4f7cd"
+        }
+      }
     }
   },
   "schema": 1
