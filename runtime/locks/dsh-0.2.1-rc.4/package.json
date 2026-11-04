@@ -6,6 +6,9 @@
     "zod": "4.6.6"
   },
   "overrides": {
+    "@deepseek-ai/libreoffice-kit": {
+      "fflate": "0.8.3"
+    },
     "zod": "$zod",
     "undici": "8.12.2",
     "@deepseek-ai/dsh-mcp-client": {
