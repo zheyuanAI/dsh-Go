@@ -32,3 +32,12 @@ credentials and injected transport. They do not establish real account access,
 subscription eligibility, live model availability or Android compatibility.
 离线测试使用合成凭据和模拟网络；不代表真实账号、订阅额度、在线模型或
 Android 环境已经验证。上线前需用本人账号完成登录及至少两轮工具调用。
+
+The existing Python patch-fixture suite has four CRLF-related failures on this
+Windows workstation (and one fixture-dependent skip). The new provider patch
+was separately applied to its clean, hash-verified original and applied again
+to verify idempotency and companion installation. This is not a claim that the
+complete Linux/Android CI matrix passed.
+当前 Windows 工作站上，原有 Python 补丁测试有四项因 CRLF 夹具失败、一项
+因缺少夹具跳过。新增补丁已针对哈希匹配的原文件独立验证首次应用、重复应用
+和配套模块安装；不代表完整 Linux／Android CI 已通过。

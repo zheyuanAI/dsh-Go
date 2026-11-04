@@ -48,12 +48,31 @@ List<List<Object?>> _sent(_ScriptedCarrier carrier) => [
 ];
 
 void main() {
+  test('Antigravity subscription list, sign in and sign out use the DSH model route', () async {
+    final carrier = _ScriptedCarrier({
+      'appAuth/list': (_) => ok({'providers': [{'id': 'google-antigravity', 'signedIn': false}]}),
+      'appAuth/begin': (_) => ok({'attemptId': 'synthetic-antigravity'}),
+      'appAuth/signOut': (_) => ok({}),
+    });
+    final client = DshClient.withCarrier(carrier);
+    expect((await client.subscriptions()).single.subscription, Subscription.antigravity);
+    expect(await client.beginLogin(Subscription.antigravity), 'synthetic-antigravity');
+    await client.signOut(Subscription.antigravity);
+    expect(_sent(carrier), [
+      ['appAuth/list', <String, Object?>{}],
+      ['appAuth/begin', {'provider': 'google-antigravity'}],
+      ['appAuth/signOut', {'provider': 'google-antigravity'}],
+    ]);
+    await client.close();
+  });
   group('Subscription', () {
     test('wire ids are the pi-ai provider ids', () {
       expect(Subscription.chatgpt.wire, 'openai-codex');
       expect(Subscription.claude.wire, 'anthropic');
+      expect(Subscription.antigravity.wire, 'google-antigravity');
       expect(Subscription.fromWire('openai-codex'), Subscription.chatgpt);
       expect(Subscription.fromWire('anthropic'), Subscription.claude);
+      expect(Subscription.fromWire('google-antigravity'), Subscription.antigravity);
       expect(Subscription.fromWire('openai'), isNull);
       expect(Subscription.fromWire(null), isNull);
     });

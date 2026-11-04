@@ -26,8 +26,15 @@ test('patched DSH catalog resolves a subscription profile and preserves existing
   const file = join(lib, `antigravity-test-${process.pid}.mjs`);
   try {
     const source = await readFile(join(lib, 'index.js'), 'utf8');
-    await writeFile(file, source + '\nexport { resolveProfiles, toPiReplayState, toPiAssistant };\n');
-    const { resolveProfiles, PiAiAdapter } = await load(file);
+    await writeFile(file, source + '\nexport { resolveProfiles, catalogProviders };\n');
+    const { resolveProfiles, PiAiAdapter, catalogProviders } = await load(file);
+    const sent = [];
+    catalogProviders().set(PROVIDER_ID, antigravityProvider({ transport: async (_url, init) => {
+      sent.push(JSON.parse(init.body));
+      return streamResponse(sent.length > 1 ? [stop] : [{ candidates: [{ content: { parts: [
+        { functionCall: { name: 'lookup', args: { q: 'hello' } }, thoughtSignature: 'c3ludGhldGljLXNpZw==' },
+      ] }, finishReason: 'STOP' }] }]);
+    } }));
     const profiles = resolveProfiles({ [PROVIDER_ID]: { displayName: 'Antigravity' }, 'openai-codex': {} });
     const adapter = new PiAiAdapter({ profiles: () => profiles, resolveApiKey: async () => undefined,
       auth: { credentials: { read: async id => id === PROVIDER_ID ? grant : undefined, list: async () => [],
@@ -38,6 +45,28 @@ test('patched DSH catalog resolves a subscription profile and preserves existing
     assert(models.some(m => (m.model ?? m.id) === model.id));
     assert(profiles.has('openai-codex'));
     assert(models.every(m => !String(m.model ?? m.id).includes('image')));
+    const user = { role: 'user', content: [{ type: 'text', text: 'hello' }] };
+    const request = { provider: PROVIDER_ID, model: model.id, messages: [user], sessionId: 'synthetic-session',
+      tools: [{ name: 'lookup', description: 'Lookup', parameters: { type: 'object', properties: { q: { type: 'string' } } } }] };
+    const first = [];
+    for await (const chunk of adapter.stream(request)) first.push(chunk);
+    const finish = first.find(c => c.type === 'finish');
+    assert.equal(finish.reason.kind, 'tool-calls', JSON.stringify(finish));
+    const blocks = first.filter(c => c.type === 'block-end').map(c => c.block);
+    const call = blocks.find(b => b.type === 'tool-call');
+    assert.equal(JSON.parse(call.arguments).q, 'hello');
+    const assistant = { id: 'assistant-1', role: 'assistant', content: blocks,
+      source: { kind: 'model', provider: PROVIDER_ID, model: model.id, replayState: finish.replayState } };
+    const tool = { id: 'tool-1', role: 'tool', toolCallId: call.id,
+      source: { kind: 'tool', callId: call.id }, content: [{ type: 'text', text: 'found' }] };
+    const second = [];
+    for await (const chunk of adapter.stream({ ...request, messages: [user, assistant, tool] })) second.push(chunk);
+    assert.equal(second.find(c => c.type === 'finish').reason.kind, 'stop');
+    assert(second.some(c => c.type === 'text-delta' && c.text === '完成'));
+    const replayCall = sent[1].request.contents.flatMap(c => c.parts).find(p => p.functionCall);
+    assert.equal(replayCall.thoughtSignature, 'c3ludGhldGljLXNpZw==');
+    assert.equal(replayCall.functionCall.id, call.id);
+    assert(sent[1].request.contents.some(c => c.parts.some(p => p.functionResponse?.id === call.id)));
   } finally { await unlink(file).catch(() => {}); }
 });
 

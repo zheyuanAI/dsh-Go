@@ -22,6 +22,7 @@ import '../theme/theme.dart';
 String subscriptionLetter(Subscription s) => switch (s) {
   Subscription.chatgpt => 'G',
   Subscription.claude => 'C',
+  Subscription.antigravity => 'A',
 };
 
 /// Opens the sign-in sheet; true once signed in. Closing it cancels the
@@ -88,7 +89,10 @@ class _SubscriptionLoginSheetState extends ConsumerState<SubscriptionLoginSheet>
   void _onStep() {
     if (!mounted) return;
     final step = _session!.step;
-    if (step.phase == LoginPhase.open && step.url != null && step.url != _opened) {
+    if ((step.phase == LoginPhase.open ||
+            (widget.subscription == Subscription.antigravity && step.phase == LoginPhase.prompt)) &&
+        step.url != null &&
+        step.url != _opened) {
       unawaited(_open(step.url!));
     }
     if (step.phase == LoginPhase.done && _doneTimer == null) {
@@ -179,6 +183,11 @@ class _SubscriptionLoginSheetState extends ConsumerState<SubscriptionLoginSheet>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SheetTitleBar(l10n.engineSubscriptionSignIn(subscriptionLabel(widget.subscription))),
+            if (widget.subscription == Subscription.antigravity)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(SheetTitleBar.inset, 0, SheetTitleBar.inset, 8),
+                child: Text(l10n.engineAntigravityNotice, style: Theme.of(context).textTheme.bodySmall),
+              ),
             SmoothSize(
               duration: AppMotion.of(context, AppMotion.standard),
               curve: AppMotion.std,

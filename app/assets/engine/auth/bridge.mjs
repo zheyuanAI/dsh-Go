@@ -17,6 +17,8 @@
 // After a successful sign-in it declares the catalog route
 // (`llm-pi-ai.providers.<id>`) so the provider's models show up; sign-out removes
 // the route and deletes the grant. Token refresh stays with pi-ai, per request.
+// This fork's runtime patch also offers google-antigravity, using a pasted
+// callback URL. It is listed only when that authorization flow is installed.
 //
 // This file has no imports from DSH: `index.mjs` wires it into the host, and the
 // tests drive it with a fake context.
@@ -37,6 +39,12 @@ export const PROVIDERS = Object.freeze({
     // pi-ai's Claude login prefers 53692 and falls back to any free port (the
     // redirect URI names the port it got), so a callback is always possible.
     callbackPort: undefined,
+  }),
+  'google-antigravity': Object.freeze({
+    displayName: 'Antigravity',
+    callbackPort: undefined,
+    manualOnly: true,
+    requiresFlow: true,
   }),
 })
 
@@ -267,6 +275,8 @@ export class AuthBridge {
     const credentials = this.#get('credentials')
     const providers = []
     for (const id of Object.keys(PROVIDERS)) {
+      // Older/remote engines may have the app bridge without this runtime patch.
+      if (PROVIDERS[id].requiresFlow && this.#get('authorization')?.describe?.(recordKeyFor(id)) === undefined) continue
       let record
       try {
         record = await credentials?.readRecord(recordKeyFor(id))
@@ -398,6 +408,7 @@ export class AuthBridge {
       if (authorization?.describe?.(key) === undefined) {
         throw Object.assign(new Error(`no authorization flow for ${key}`), { code: 'NO_FLOW' })
       }
+      if (spec.manualOnly) attempt.callbackLikely = false
       if (spec.callbackPort !== undefined) {
         // The replaced attempt's callback server closes as its flow unwinds.
         if (replaced) for (let i = 0; i < 15 && !(await this.#probePort(spec.callbackPort)); i++) await sleep(100)

@@ -1,4 +1,4 @@
-/// Subscription sign-in (ChatGPT, Claude) through dsh-app's engine-side auth
+/// Subscription sign-in (ChatGPT, Claude, Antigravity) through dsh-app's engine-side auth
 /// bridge (`@dsh-app/auth`, service `appAuth`).
 ///
 /// DSH 0.2.1 already carries both sign-in flows: the built-in `llm-pi-ai`
@@ -14,6 +14,9 @@
 ///                                    (answerLogin for prompt)  cancelled
 /// ```
 ///
+/// This fork's runtime patch adds `llm-pi-ai/google-antigravity` to that same
+/// catalog and authorization seam; older engines omit this subscription.
+///
 /// Polling (not a stream) so it works the same over every carrier. Once an
 /// attempt is `done`, the bridge has also declared the route
 /// (`llm-pi-ai.providers.<id>`) so its models show up in the catalog;
@@ -26,7 +29,8 @@ import 'session_api.dart';
 /// A subscription the bridge can sign in to.
 enum Subscription {
   chatgpt('openai-codex'),
-  claude('anthropic');
+  claude('anthropic'),
+  antigravity('google-antigravity');
 
   const Subscription(this.wire);
 

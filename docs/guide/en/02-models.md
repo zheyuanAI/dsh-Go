@@ -37,6 +37,14 @@ Providers come in three groups:
 - **Subscriptions**: shown when the engine supports them and is connected. Tap **Sign in** and follow the steps in your browser. Open a signed-in subscription to see its models or **Sign out**, which removes its models from the model list.
 - **Custom**: providers you add, plus ones configured in DSH Web or the engine's config file. Connect to the engine to add one.
 
+### Antigravity channel
+
+This branch's updated engine offers an Antigravity subscription channel. Older engines and remote engines without the adapter omit it. Tap **Sign in**, authorize on Google's page, then paste the complete final `http://localhost:51121/oauth-callback?...` URL into the sign-in sheet and tap **Confirm**. You can copy it from the address bar even if the browser says that the local page cannot be reached. A bare code is insufficient. Never share this URL with others.
+
+After sign-in, select Antigravity and a model in the model picker. This is a DSH model channel: DSH retains tools, permissions and sessions; Antigravity CLI is not started. Credentials stay on the current engine host. Signing out removes the subscription grant and route. The adapter supplies the catalog; actual model availability and quota depend on the account and service.
+
+This is an unofficial integration. Google does not support third-party use of personal Antigravity OAuth; accounts may be restricted. Real accounts, live models and Android compatibility require separate validation. Account rotation and external credential custody are not enabled.
+
 ## Add a custom provider
 
 <!-- nav: commonSettings,hubSettingsProviders,engineProviderAdd -->

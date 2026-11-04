@@ -316,7 +316,10 @@ FakeProviderBackend sampleBackend({bool isLocal = true}) => FakeProviderBackend(
 class FakeSubscriptionBackend implements SubscriptionBackend {
   FakeSubscriptionBackend({this.available = true, List<SubscriptionStatus>? statuses, List<LoginStep>? steps})
     : statuses =
-          statuses ?? [for (final s in Subscription.values) SubscriptionStatus(subscription: s, signedIn: false)],
+          statuses ?? [
+            for (final s in [Subscription.chatgpt, Subscription.claude])
+              SubscriptionStatus(subscription: s, signedIn: false),
+          ],
       steps = steps ?? const [LoginStep(phase: LoginPhase.starting)];
 
   /// False: `appAuth/list` fails as on an engine without the bridge.

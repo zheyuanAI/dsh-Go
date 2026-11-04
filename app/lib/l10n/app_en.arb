@@ -1623,6 +1623,7 @@
   "engineProvidersSignInOrKey": "Sign in or enter an API key",
   "engineProvidersOfficial": "Official",
   "engineProvidersSubscription": "Subscriptions",
+  "engineAntigravityNotice": "Experimental unofficial channel. Google does not support this subscription sign-in; account access may be restricted.",
   "engineProvidersCustom": "Custom",
   "engineProvidersCompatibleHint": "OpenAI- and Anthropic-compatible services",
   "engineProvidersReadOnly": "Engine settings are read-only. Can’t add providers",

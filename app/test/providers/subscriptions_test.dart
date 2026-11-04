@@ -104,6 +104,37 @@ List<String> _mockClipboard(WidgetTester tester) {
 }
 
 void main() {
+  testWidgets('Antigravity opens Google login and accepts the full callback as a DSH subscription', (tester) async {
+    const url = 'https://accounts.google.com/o/oauth2/v2/auth?state=synthetic';
+    final bridge = FakeSubscriptionBackend(
+      statuses: const [SubscriptionStatus(subscription: Subscription.antigravity, signedIn: false)],
+      steps: const [LoginStep(phase: LoginPhase.prompt, url: url, message: '粘贴跳转后的链接')],
+    );
+    final browser = FakeBrowser();
+    await _pump(tester, const ProvidersPage(), [
+      ...providerOverrides(FakeProviderBackend(), subscriptions: bridge),
+      accountBrowserProvider.overrideWithValue(browser),
+    ]);
+    expect(find.text('Antigravity'), findsOneWidget);
+    expect(find.text(appL10n.engineAntigravityNotice), findsOneWidget);
+    await tester.tap(find.text('Antigravity'));
+    await settle(tester);
+    expect(find.text('登录 Antigravity'), findsOneWidget);
+    expect(bridge.calls, contains('begin:google-antigravity'));
+    expect(browser.opened, [Uri.parse(url)]);
+    expect(find.byType(TextField), findsOneWidget);
+    const callback = 'http://localhost:51121/oauth-callback?code=synthetic-code&state=synthetic';
+    await tester.enterText(find.byType(TextField), callback);
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, '确定'));
+    await settle(tester);
+    expect(bridge.calls, contains('answer:att-1:$callback'));
+    expect(browser.opened, hasLength(1));
+    await tester.tap(find.byTooltip('关闭'));
+    await settle(tester);
+    expect(bridge.calls, contains('cancel:att-1'));
+  });
+
   group('rows', () {
     testWidgets('signed in shows the account; signed out a 登录 capsule', (tester) async {
       final bridge = FakeSubscriptionBackend(statuses: _signedInChatGpt);

@@ -237,6 +237,7 @@ class _SubscriptionRow extends StatelessWidget {
     return ListPageRow(
       leading: Monogram(label, letter: subscriptionLetter(status.subscription)),
       title: label,
+      subtitle: status.subscription == Subscription.antigravity ? l10n.engineAntigravityNotice : null,
       trailing: LoginCapsule(onPressed: onSignIn, semanticLabel: l10n.engineSubscriptionSignIn(label)),
       onTap: onSignIn,
     );

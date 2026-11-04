@@ -203,6 +203,33 @@ const phase = (name) => (step) => step.phase === name
 
 // ── tests ──────────────────────────────────────────────────────────────────
 
+test('Antigravity is advertised only by a capable engine; pasted login declares a DSH model route', async () => {
+  const { bridge, authorization, credentials, settings, logs } = setup()
+  const id = 'google-antigravity'
+  const recordKey = `llm-pi-ai/${id}`
+  assert(!(await bridge.list()).providers.some(p => p.id === id))
+  authorization.register(recordKey, async ({ notify, prompt, commit }) => {
+    notify({ url: 'https://accounts.google.com/o/oauth2/v2/auth?state=synthetic-state' })
+    const pasted = await prompt({ kind: 'text', message: 'Paste full callback URL' })
+    assert.equal(new URL(pasted).searchParams.get('code'), 'synthetic-code')
+    await commit({ kind: 'grant', payload: { type: 'oauth', access: 'SYNTHETIC_ACCESS', refresh: 'SYNTHETIC_REFRESH|project', expires: Date.now() + 3600e3 } })
+  })
+  assert.deepEqual((await bridge.list()).providers.find(p => p.id === id), { id, signedIn: false })
+  const { attemptId } = await bridge.begin(id)
+  const prompt = await waitFor(bridge, attemptId, phase('prompt'))
+  assert(prompt.url.startsWith('https://accounts.google.com/'))
+  bridge.answer(attemptId, 'http://localhost:51121/oauth-callback?code=synthetic-code&state=synthetic-state')
+  await waitFor(bridge, attemptId, phase('done'))
+  assert.deepEqual(settings.user.providers[id], { displayName: 'Antigravity' })
+  assert(credentials.records.has(recordKey))
+  assert.equal((await bridge.list()).providers.find(p => p.id === id).signedIn, true)
+  assert(!JSON.stringify(logs).includes('SYNTHETIC_ACCESS'))
+  assert(!JSON.stringify(logs).includes('SYNTHETIC_REFRESH'))
+  await bridge.signOut(id)
+  assert(!credentials.records.has(recordKey))
+  assert.equal(settings.user.providers[id], undefined)
+})
+
 test('open → done: browser callback, then the route is declared and list shows the account', async () => {
   const { bridge, credentials, authorization, settings } = setup()
   const callback = deferred()

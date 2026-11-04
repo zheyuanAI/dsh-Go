@@ -5570,6 +5570,10 @@ class L10nEn extends L10n {
   String get engineProvidersSubscription => 'Subscriptions';
 
   @override
+  String get engineAntigravityNotice =>
+      'Experimental unofficial channel. Google does not support this subscription sign-in; account access may be restricted.';
+
+  @override
   String get engineProvidersCustom => 'Custom';
 
   @override

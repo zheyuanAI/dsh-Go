@@ -9830,6 +9830,12 @@ abstract class L10n {
   /// **'订阅'**
   String get engineProvidersSubscription;
 
+  /// No description provided for @engineAntigravityNotice.
+  ///
+  /// In zh, this message translates to:
+  /// **'实验性非官方渠道，Google 不支持此订阅登录方式，账号可能受到限制。'**
+  String get engineAntigravityNotice;
+
   /// No description provided for @engineProvidersCustom.
   ///
   /// In zh, this message translates to:

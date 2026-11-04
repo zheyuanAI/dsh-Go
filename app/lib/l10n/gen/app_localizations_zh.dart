@@ -5269,6 +5269,9 @@ class L10nZh extends L10n {
   String get engineProvidersSubscription => '订阅';
 
   @override
+  String get engineAntigravityNotice => '实验性非官方渠道，Google 不支持此订阅登录方式，账号可能受到限制。';
+
+  @override
   String get engineProvidersCustom => '自定义';
 
   @override
