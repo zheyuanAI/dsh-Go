@@ -18288,6 +18288,17 @@ class L10nEn extends L10n {
   String get viewShareLinkHint => 'End-to-end encrypted. The server can’t see your content.';
 
   @override
+  String get viewShareUploadTitle => 'Upload chat and create a link?';
+
+  @override
+  String viewShareUploadBody(String host) {
+    return 'The selected share content will be encrypted and uploaded to $host, including images, thinking and tool details kept by your sharing options. Anyone with the full link can decrypt it. Automatic redaction may miss sensitive content; check the preview first. Cancel to upload nothing.';
+  }
+
+  @override
+  String get viewShareUploadConfirm => 'Upload and create link';
+
+  @override
   String get viewSharePreview => 'Preview';
 
   @override

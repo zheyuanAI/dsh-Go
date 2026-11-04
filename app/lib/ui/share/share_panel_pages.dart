@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 
 import '../../l10n/l10n.dart';
 import '../../share_code/conversation_share.dart' show DecodedConversation, maxConversationFileBytes;
+import '../../share_hosted/hosted_config.dart' show shareHostOrigin;
 import '../common/app_sheet.dart';
 import '../common/list_page_row.dart';
 import '../common/segmented_pill.dart';
@@ -324,6 +325,7 @@ class ShareLinkPage extends StatefulWidget {
 
 class _ShareLinkPageState extends State<ShareLinkPage> {
   bool _copied = false;
+  bool _confirmingUpload = false;
   Timer? _copiedReset;
   late final SharePanelModel _model = SharePanelScope.of(context);
 
@@ -358,6 +360,33 @@ class _ShareLinkPageState extends State<ShareLinkPage> {
     final built = model.built;
     if (link == null || built == null) return;
     SheetNavigator.of(context).push((_) => ShareQrPage(link: '${link.url}', title: built.share.title));
+  }
+
+  Future<void> _makeLink() async {
+    if (_confirmingUpload || _model.work != null) return;
+    setState(() => _confirmingUpload = true);
+    final l10n = context.l10n;
+    try {
+      final approved = await showDialog<bool>(
+        context: context,
+        builder: (dialog) => AlertDialog(
+          title: Text(l10n.viewShareUploadTitle),
+          scrollable: true,
+          content: Text(l10n.viewShareUploadBody(Uri.parse(shareHostOrigin).host)),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonCancel)),
+            FilledButton(
+              key: const ValueKey('share-link-upload-confirm'),
+              onPressed: () => Navigator.pop(dialog, true),
+              child: Text(l10n.viewShareUploadConfirm),
+            ),
+          ],
+        ),
+      );
+      if (approved == true && mounted) await _model.makeLink();
+    } finally {
+      if (mounted) setState(() => _confirmingUpload = false);
+    }
   }
 
   Future<void> _stop(SharePanelModel model) async {
@@ -401,7 +430,7 @@ class _ShareLinkPageState extends State<ShareLinkPage> {
         key: const ValueKey('share-link-expiry'),
         segments: [for (final e in LinkExpiry.values) PillSegment(e, e.label)],
         selected: model.expiry,
-        onChanged: busy ? null : (e) => model.expiry = e,
+        onChanged: busy || _confirmingUpload ? null : (e) => model.expiry = e,
       ),
       Padding(
         padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
@@ -464,7 +493,7 @@ class _ShareLinkPageState extends State<ShareLinkPage> {
       action = FilledButton(
         key: const ValueKey('share-link-make'),
         style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(ShareActionBar.height)),
-        onPressed: busy || tooLarge || built == null ? null : model.makeLink,
+        onPressed: busy || _confirmingUpload || tooLarge || built == null ? null : _makeLink,
         child: busy
             ? SizedBox.square(
                 dimension: 18,

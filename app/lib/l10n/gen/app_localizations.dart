@@ -31448,6 +31448,24 @@ abstract class L10n {
   /// **'端到端加密，服务器看不到内容'**
   String get viewShareLinkHint;
 
+  /// No description provided for @viewShareUploadTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'上传对话并创建链接？'**
+  String get viewShareUploadTitle;
+
+  /// No description provided for @viewShareUploadBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'将把当前选中的分享内容加密后上传到 {host}，包括分享选项中保留的图片、思考和工具信息。任何拿到完整链接的人都能解密查看。自动脱敏可能遗漏敏感内容，请先检查预览。取消不会上传。'**
+  String viewShareUploadBody(String host);
+
+  /// No description provided for @viewShareUploadConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'上传并创建链接'**
+  String get viewShareUploadConfirm;
+
   /// No description provided for @viewSharePreview.
   ///
   /// In zh, this message translates to:

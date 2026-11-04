@@ -17,7 +17,7 @@ Touching and holding a chat in the chat list, or choosing **Share** in a deliver
 
 ### Link
 
-End-to-end encrypted; the server can't see your content. Choose **7 days**, **30 days** (default) or **Forever** and tap **Create link**. Then **Copy link**, show the **QR code**, **Share** it, or **Stop sharing**: after you confirm, you have 4 seconds to tap **Undo**. If you don't, deletion starts after that window; the link stops working once deletion succeeds.
+Creating a link requires confirmation to upload to go.dshtui.com. Confirming uploads an encrypted copy of the selected content; canceling uploads nothing. Anyone with the full link can decrypt it. Choose **7 days**, **30 days** (default) or **Forever** and tap **Create link**. Then **Copy link**, show the **QR code**, **Share** it, or **Stop sharing**: after you confirm, you have 4 seconds to tap **Undo**. If you don't, deletion starts after that window; the link stops working once deletion succeeds.
 
 ### Image
 

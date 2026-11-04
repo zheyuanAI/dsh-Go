@@ -17305,6 +17305,17 @@ class L10nZh extends L10n {
   String get viewShareLinkHint => '端到端加密，服务器看不到内容';
 
   @override
+  String get viewShareUploadTitle => '上传对话并创建链接？';
+
+  @override
+  String viewShareUploadBody(String host) {
+    return '将把当前选中的分享内容加密后上传到 $host，包括分享选项中保留的图片、思考和工具信息。任何拿到完整链接的人都能解密查看。自动脱敏可能遗漏敏感内容，请先检查预览。取消不会上传。';
+  }
+
+  @override
+  String get viewShareUploadConfirm => '上传并创建链接';
+
+  @override
   String get viewSharePreview => '预览';
 
   @override

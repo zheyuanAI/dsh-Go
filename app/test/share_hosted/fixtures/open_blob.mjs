@@ -6,7 +6,7 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const [blobPath, keyText] = process.argv.slice(2);
 const bytes = new Uint8Array(readFileSync(blobPath));
@@ -19,7 +19,7 @@ const text = await new Response(new Blob([plain]).stream().pipeThrough(new Decom
 let viewer = null;
 const viewerJs = join(dirname(fileURLToPath(import.meta.url)), '../../../../site/share/viewer.js');
 if (existsSync(viewerJs)) {
-  await import(viewerJs);
+  await import(pathToFileURL(viewerJs).href);
   if (globalThis.DshgoViewer?.decryptHosted) viewer = await globalThis.DshgoViewer.decryptHosted(bytes.buffer, keyText);
 }
 process.stdout.write(JSON.stringify({ text, viewer }));

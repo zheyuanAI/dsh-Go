@@ -225,7 +225,12 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
   await _settle(tester);
 }
 
-Future<void> _key(WidgetTester tester, String key) => _tap(tester, find.byKey(ValueKey(key)));
+Future<void> _key(WidgetTester tester, String key) async {
+  await _tap(tester, find.byKey(ValueKey(key)));
+  if (key == 'share-link-make' && find.byKey(const ValueKey('share-link-upload-confirm')).evaluate().isNotEmpty) {
+    await _tap(tester, find.byKey(const ValueKey('share-link-upload-confirm')));
+  }
+}
 
 Future<void> _back(WidgetTester tester) async {
   await tester.tap(find.byTooltip('返回'));
@@ -255,6 +260,28 @@ void _expectWhole(WidgetTester tester, String text) {
 }
 
 void main() {
+  for (final scale in [1.0, 2.0]) {
+    testWidgets('link upload requires confirmation at $scale×; cancel and dismiss send nothing', (tester) async {
+      final panel = await _open(tester, textScale: scale, size: const Size(320, 640));
+      await _key(tester, 'share-to-link');
+      final make = find.byKey(const ValueKey('share-link-make'));
+      await _tap(tester, make);
+      expect(panel.links.uploads, isEmpty);
+      expect(find.textContaining('go.dshtui.com'), findsOneWidget);
+      expect(find.textContaining('任何拿到完整链接的人'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await _tap(tester, find.text('取消'));
+      expect(panel.links.uploads, isEmpty);
+      await _tap(tester, make);
+      Navigator.of(tester.element(find.byType(AlertDialog))).pop();
+      await _settle(tester);
+      expect(panel.links.uploads, isEmpty);
+      await _tap(tester, make);
+      await _tap(tester, find.byKey(const ValueKey('share-link-upload-confirm')));
+      expect(panel.links.uploads, hasLength(1));
+    });
+  }
+
   // ── Goldens ───────────────────────────────────────────────────────────────
 
   for (final brightness in Brightness.values) {
