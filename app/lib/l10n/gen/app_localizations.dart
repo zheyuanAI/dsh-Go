@@ -30053,13 +30053,13 @@ abstract class L10n {
   /// No description provided for @usageStatsFooter.
   ///
   /// In zh, this message translates to:
-  /// **'只含使用次数、版本和手机品牌，不含对话、文件和账号。'**
+  /// **'默认关闭。开启后向 go.dshtui.com 发送使用次数、设备概要和随机安装编号，不含对话正文或 API 密钥。'**
   String get usageStatsFooter;
 
   /// No description provided for @usageNoticeBody.
   ///
   /// In zh, this message translates to:
-  /// **'不含对话和个人信息，可随时关闭'**
+  /// **'默认关闭，开启后发送使用概要'**
   String get usageNoticeBody;
 
   /// No description provided for @usageUpgradeNotice.

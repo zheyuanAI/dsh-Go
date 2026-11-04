@@ -16434,10 +16434,10 @@ class L10nZh extends L10n {
   String get usageStatsSection => '改进 DSH Go';
 
   @override
-  String get usageStatsFooter => '只含使用次数、版本和手机品牌，不含对话、文件和账号。';
+  String get usageStatsFooter => '默认关闭。开启后向 go.dshtui.com 发送使用次数、设备概要和随机安装编号，不含对话正文或 API 密钥。';
 
   @override
-  String get usageNoticeBody => '不含对话和个人信息，可随时关闭';
+  String get usageNoticeBody => '默认关闭，开启后发送使用概要';
 
   @override
   String get usageUpgradeNotice => '新增匿名使用统计，帮助改进 DSH Go。\n不含对话和个人信息';

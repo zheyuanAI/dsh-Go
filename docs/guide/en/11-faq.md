@@ -66,7 +66,7 @@ Check that the plugin is enabled, and restart the engine if asked. A plugin's na
 <!-- nav: commonSettings,hubPrivacy,usageStatsTitle -->
 `Settings › Privacy and sharing › Send anonymous usage stats` · [Open](dshgo://open/usage-stats)
 
-On by default; the switch is on the welcome screen the first time you open the app. If you updated from an earlier version, a one-time notice at the bottom of the home screen tells you, and can turn it off right there. While it's on, the app sends anonymous stats for the days before, at most once a day, and only this: app and Android version, CPU architecture, phone maker (not the model), app language, how the local engine was started, and that day's number of messages, voice inputs, phone control tasks, generations, shares and installed plugins. Devices are told apart by a random ID that changes every 90 days.
+Off by default in this fork. Counting and reporting start only after you turn the switch on; viewing the welcome screen or settings is not consent. The first time you use this version, the old default-on setting is not inherited, and queued reports and the old install ID are discarded. While it's on, the app sends anonymous stats for the days before, at most once a day, and only this: app and Android version, CPU architecture, phone maker (not the model), app language, how the local engine was started, and that day's number of messages, voice inputs, phone control tasks, generations, shares and installed plugins. Devices are told apart by a random ID that changes every 90 days.
 
 Never accounts, API keys, chats, files, prompts or host addresses, and no device identifiers such as phone number or IMEI. Turn it off and nothing more is sent; the random ID and the counts kept on the phone are deleted at once.
 

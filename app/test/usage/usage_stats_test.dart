@@ -17,7 +17,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support.dart';
 
-const noticed = {UsageStatsController.noticedKey: true};
+const noticed = {
+  UsageStatsController.noticedKey: true,
+  UsageStatsController.enabledKey: true,
+  UsageStatsController.consentKey: true,
+};
 
 late FakeUsageHttp http;
 late DateTime now;
@@ -84,22 +88,66 @@ void main() {
   });
   tearDown(() => UsageBuild.active = wasActive);
 
-  test('nothing is counted or sent before the person has seen the switch', () async {
+  test('nothing is counted or sent until explicit opt-in, even after seeing the switch', () async {
     final c = await start();
-    expect(c.read(usageStatsProvider).enabled, isTrue, reason: 'on by default');
+    expect(c.read(usageStatsProvider).enabled, isFalse, reason: 'off by default');
     await c.count(UsageCount.turns, 3);
     now = DateTime(2026, 10, 29, 9);
     await c.comeBack();
     expect(http.requests, isEmpty);
     expect((await stored()).keys.where((k) => k.startsWith('usage_stats_days')), isEmpty);
 
-    // Shown at first run (or in settings): from then on, it counts.
+    // Merely displaying the switch is not permission to report.
     await c.usage.markNoticed();
+    await c.count(UsageCount.turns);
+    await c.comeBack();
+    expect(c.read(usageStatsProvider).collecting, isFalse);
+    expect(http.requests, isEmpty);
+    expect((await stored()).containsKey(UsageStatsController.daysKey), isFalse);
+    await c.usage.setEnabled(true);
     await c.count(UsageCount.turns);
     now = DateTime(2026, 10, 30, 9);
     await c.comeBack();
     expect(http.days, ['2026-10-29']);
     expect((http.requests.single['counts']! as Map)['turns'], 1);
+  });
+
+  test('upgrading discards legacy opt-out consent and queued identifiers before any send', () async {
+    final ledger = UsageLedger()..count(UsageCount.turns, DateTime(2026, 10, 27));
+    final c = await start(
+      prefs: {
+        UsageStatsController.enabledKey: true,
+        UsageStatsController.noticedKey: true,
+        UsageStatsController.daysKey: ledger.encode(),
+        UsageStatsController.iidKey: 'legacy-install-id',
+        UsageStatsController.iidSinceKey: now.millisecondsSinceEpoch,
+        UsageStatsController.failedAtKey: now.millisecondsSinceEpoch,
+        UsageStatsController.closedDayKey: '2026-10-27',
+      },
+    );
+    await c.usage.send();
+    await c.count(UsageCount.turns);
+    now = DateTime(2026, 10, 29, 9);
+    await c.comeBack();
+    expect(c.read(usageStatsProvider).enabled, isFalse);
+    expect(http.requests, isEmpty);
+    final prefs = await stored();
+    for (final key in [
+      UsageStatsController.daysKey,
+      UsageStatsController.iidKey,
+      UsageStatsController.iidSinceKey,
+      UsageStatsController.failedAtKey,
+      UsageStatsController.closedDayKey,
+    ]) {
+      expect(prefs.containsKey(key), isFalse, reason: key);
+    }
+    await c.usage.setEnabled(true);
+    await c.count(UsageCount.voice);
+    now = DateTime(2026, 10, 30, 9);
+    await c.comeBack();
+    expect(http.days, ['2026-10-29']);
+    expect(http.requests.single['iid'], isNot('legacy-install-id'));
+    expect((http.requests.single['counts']! as Map)['turns'], 0);
   });
 
   test('a past day goes out once, the day after; today waits for tomorrow', () async {
@@ -283,7 +331,10 @@ void main() {
 
   test('a body the host would refuse is never sent', () async {
     // No native side: no build number, no ABI.
-    final c = await start(prefs: noticed, phoneFacts: const UsageDevice(app: '0.9.9', sdk: 34, maker: 'vivo'));
+    final c = await start(
+      prefs: noticed,
+      phoneFacts: const UsageDevice(app: '0.9.9', sdk: 34, maker: 'vivo'),
+    );
     await c.count(UsageCount.turns);
     now = DateTime(2026, 10, 29, 9);
     await c.comeBack();
@@ -354,7 +405,9 @@ void main() {
   test('phone control: each task counts once, when it starts', () async {
     final phone = FakePhone();
     final c = await start(prefs: noticed, phone: phone);
-    PhoneStatus task(bool active, int id) => PhoneStatus(task: PhoneTaskStatus(id: id, active: active));
+    PhoneStatus task(bool active, int id) => PhoneStatus(
+      task: PhoneTaskStatus(id: id, active: active),
+    );
     for (final s in [task(true, 1), task(true, 1), task(false, 1), task(true, 2), task(true, 3), task(false, 3)]) {
       phone.pushes.add(s);
       await settle();

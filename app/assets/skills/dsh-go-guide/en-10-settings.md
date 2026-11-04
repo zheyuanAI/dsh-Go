@@ -47,7 +47,7 @@ Shows your DeepSeek account or API key and balance; tap it to open your account.
 - **Privacy and sharing**:
   - **My shared links**: see [Sharing and replay](07-sharing.md).
   - **Share configuration**: select the current host's settings, plugins, skills and personal preferences to share, and share them as a link, QR code or file.
-  - **Send anonymous usage stats**: on by default, off anytime; see [FAQ](11-faq.md).
+  - **Send anonymous usage stats**: off by default; counts and reports only after you enable it, off anytime; see [FAQ](11-faq.md).
   - **Upload chat logs to DeepSeek**: shown when the current host has it.
 
 ## Hosts

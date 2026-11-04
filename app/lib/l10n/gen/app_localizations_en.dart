@@ -17333,10 +17333,11 @@ class L10nEn extends L10n {
   String get usageStatsSection => 'Improve DSH Go';
 
   @override
-  String get usageStatsFooter => 'Only usage counts, versions and the phone’s maker. Never chats, files or accounts.';
+  String get usageStatsFooter =>
+      'Off by default. Sends usage counts, device details and a random install ID to go.dshtui.com when enabled. No chat text or API keys.';
 
   @override
-  String get usageNoticeBody => 'No chats or personal info.\nTurn off anytime.';
+  String get usageNoticeBody => 'Off by default.\nEnable to send usage summaries.';
 
   @override
   String get usageUpgradeNotice => 'New: anonymous usage stats, to help improve DSH Go.\nNo chats or personal info.';

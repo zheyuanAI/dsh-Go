@@ -1,7 +1,7 @@
 // 发送匿名使用统计: anonymous, per-day counts kept on the phone and sent once
-// each, the day after (contract v1, usage_ledger.dart). On by default, but
-// nothing is counted until the person has seen the switch (first run's
-// 「想让 DSH Go 帮你做哪些事」, or 设置 › 隐私与分享). Off means nothing is
+// each, the day after (contract v1, usage_ledger.dart). Off by default;
+// seeing a notice is not consent. Only an explicit opt-in in this build
+// enables collection. Off means nothing is
 // counted, nothing is kept and no request is made.
 
 import 'dart:async';
@@ -22,11 +22,11 @@ import 'usage_net.dart';
 export 'usage_ledger.dart' show UsageCount;
 
 class UsageStatsState {
-  const UsageStatsState({this.loaded = false, this.enabled = true, this.noticed = false});
+  const UsageStatsState({this.loaded = false, this.enabled = false, this.noticed = false});
 
   final bool loaded;
 
-  /// The switch. On unless the person turned it off.
+  /// The switch. Off until the person explicitly opts in.
   final bool enabled;
 
   /// The person has seen the switch and what it says.
@@ -47,11 +47,15 @@ final usageClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
 final usageHttpProvider = Provider<UsageHttp>((ref) => const IoUsageHttp());
 final usageEndpointProvider = Provider<Uri>((ref) => usageEndpoint);
 final usageDeviceProvider = Provider<Future<UsageDevice> Function()>((ref) => const UsageDeviceChannel().read);
-final usageLanguageProvider = Provider<String Function()>((ref) => () => AppLocale.current.languageCode);
+final usageLanguageProvider = Provider<String Function()>(
+  (ref) =>
+      () => AppLocale.current.languageCode,
+);
 
 /// Calls back each time the app comes to the front; returns how to stop.
 final usageResumesProvider = Provider<VoidCallback Function(VoidCallback onResume)>(
-  (ref) => (onResume) => AppLifecycleListener(onResume: onResume).dispose,
+  (ref) =>
+      (onResume) => AppLifecycleListener(onResume: onResume).dispose,
 );
 
 /// A phone control task began between [before] and [now]: a new number, or
@@ -60,10 +64,12 @@ bool phoneTaskStarted(PhoneTaskStatus before, PhoneTaskStatus now) =>
     now.active && (!before.active || (now.id != null && now.id != before.id));
 
 /// The on-device engine's launch while it runs (`direct`, `proot`).
-String? _engineMode(LocalRuntimeState s) => s.status.phase == RuntimePhase.running ? s.status.currentExecutionMode : null;
+String? _engineMode(LocalRuntimeState s) =>
+    s.status.phase == RuntimePhase.running ? s.status.currentExecutionMode : null;
 
 class UsageStatsController extends Notifier<UsageStatsState> {
   static const enabledKey = 'usage_stats_enabled';
+  static const consentKey = 'usage_stats_opt_in_v1';
   static const noticedKey = 'usage_stats_noticed';
   static const daysKey = 'usage_stats_days';
   static const iidKey = 'usage_stats_iid';
@@ -103,7 +109,15 @@ class UsageStatsController extends Notifier<UsageStatsState> {
     try {
       final prefs = await SharedPreferences.getInstance();
       if (!ref.mounted) return;
-      final enabled = prefs.getBool(enabledKey) ?? true;
+      // Upstream enabled statistics by default. Never inherit that decision,
+      // its queued reports or its install id without a fresh opt-in.
+      final enabled = prefs.getBool(consentKey) == true && prefs.getBool(enabledKey) == true;
+      if (!enabled) {
+        for (final key in [daysKey, iidKey, iidSinceKey, failedAtKey, closedDayKey]) {
+          await prefs.remove(key);
+        }
+        if (!ref.mounted) return;
+      }
       DateTime? time(String key) => switch (prefs.getInt(key)) {
         final int ms => DateTime.fromMillisecondsSinceEpoch(ms),
         null => null,
@@ -174,7 +188,7 @@ class UsageStatsController extends Notifier<UsageStatsState> {
   }
 
   /// The switch was in front of the person (first run, or the settings
-  /// page): from now on the app counts, unless it is off.
+  /// page). This records visibility only; it never enables collection.
   Future<void> markNoticed() async {
     await _loaded;
     if (!ref.mounted || state.noticed) return;
@@ -199,6 +213,7 @@ class UsageStatsController extends Notifier<UsageStatsState> {
     }
     await _write((prefs) async {
       await prefs.setBool(enabledKey, enabled);
+      await prefs.setBool(consentKey, enabled);
       await prefs.setBool(noticedKey, true);
       if (!enabled) {
         for (final key in [daysKey, iidKey, iidSinceKey, failedAtKey, closedDayKey]) {

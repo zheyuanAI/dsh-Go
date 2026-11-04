@@ -3,8 +3,7 @@
 // welcome row's text starts 16 in from the button's left edge and the switch
 // track ends 16 in from its right, both centred on the row, the row as far
 // from either screen edge; at 320 dp with large text in both languages
-// nothing overflows or is cut. Seeing either one is what starts the
-// counting; the switch turns it all off.
+// nothing overflows or is cut. Seeing either one never starts counting; only turning the switch on does.
 //
 //   flutter test --update-goldens test/usage/usage_ui_test.dart
 
@@ -105,30 +104,32 @@ void main() {
       });
     }
 
-    testWidgets('seeing it starts the counting; on by default', (tester) async {
+    testWidgets('seeing it records notice, but collection stays off by default', (tester) async {
       await _pumpWelcome(tester);
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
       await tester.pump();
       final state = _container(tester).read(usageStatsProvider);
-      expect(state.enabled, isTrue);
+      expect(state.enabled, isFalse);
+      expect(state.collecting, isFalse);
       expect(state.noticed, isTrue);
-      expect(tester.widget<Switch>(find.byKey(_switch)).value, isTrue);
+      expect(tester.widget<Switch>(find.byKey(_switch)).value, isFalse);
       expect((await tester.runAsync(_stored))![UsageStatsController.noticedKey], isTrue);
     });
 
-    testWidgets('one tap anywhere on the row turns it off, and back on', (tester) async {
+    testWidgets('one tap anywhere on the row explicitly opts in, and back off', (tester) async {
       await _pumpWelcome(tester);
       await tester.tap(find.text(appL10n.usageNoticeBody));
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
       await tester.pump();
-      expect(_container(tester).read(usageStatsProvider).enabled, isFalse);
-      expect(tester.widget<Switch>(find.byKey(_switch)).value, isFalse);
-      expect((await tester.runAsync(_stored))![UsageStatsController.enabledKey], isFalse);
+      expect(_container(tester).read(usageStatsProvider).enabled, isTrue);
+      expect(tester.widget<Switch>(find.byKey(_switch)).value, isTrue);
+      expect((await tester.runAsync(_stored))![UsageStatsController.enabledKey], isTrue);
+      expect((await tester.runAsync(_stored))![UsageStatsController.consentKey], isTrue);
 
       await tester.tap(find.byKey(_switch));
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
       await tester.pump();
-      expect(_container(tester).read(usageStatsProvider).enabled, isTrue);
+      expect(_container(tester).read(usageStatsProvider).enabled, isFalse);
     });
 
     testWidgets('reads as one switch to a screen reader', (tester) async {
@@ -148,7 +149,11 @@ void main() {
       overrides: engine.engineOverrides(DshClient.withCarrier(engine.FakeSettingsHost())),
     );
 
-    testWidgets('the page counts as being told; the switch turns it all off', (tester) async {
+    testWidgets('an opted-in user can turn it all off from the privacy page', (tester) async {
+      SharedPreferences.setMockInitialValues({
+        UsageStatsController.enabledKey: true,
+        UsageStatsController.consentKey: true,
+      });
       await pumpPrivacy(tester);
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
       await tester.pump();

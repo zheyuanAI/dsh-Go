@@ -86,9 +86,21 @@ void main() {
     http = FakeUsageHttp();
     now = DateTime(2026, 10, 30, 9);
     resume = null;
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({
+      UsageStatsController.enabledKey: true,
+      UsageStatsController.consentKey: true,
+    });
   });
   tearDown(() => UsageBuild.active = wasActive);
+
+  testWidgets('legacy default-on installs stay off and never show an enabling notice', (tester) async {
+    SharedPreferences.setMockInitialValues({UsageStatsController.enabledKey: true});
+    await _pumpHome(tester);
+    await _wait(tester, const Duration(seconds: 10));
+    expect(find.byKey(_notice), findsNothing);
+    expect(_container(tester).read(usageStatsProvider).enabled, isFalse);
+    expect(http.requests, isEmpty);
+  });
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
@@ -130,7 +142,7 @@ void main() {
     });
   }
 
-  testWidgets('an install from before: shown once, and told from then on', (tester) async {
+  testWidgets('an opted-in install: notice shown once, and told from then on', (tester) async {
     await _pumpHome(tester);
     expect(find.byKey(_notice), findsNothing, reason: 'not before the home has settled');
     await _wait(tester);

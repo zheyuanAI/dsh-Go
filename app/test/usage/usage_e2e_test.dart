@@ -106,7 +106,11 @@ void main() {
   }
 
   test('one POST per past day, plain JSON, no cookie, nothing extra; a 500 is tried again', () async {
-    final c = await start({UsageStatsController.noticedKey: true});
+    final c = await start({
+      UsageStatsController.noticedKey: true,
+      UsageStatsController.enabledKey: true,
+      UsageStatsController.consentKey: true,
+    });
     final usage = c.read(usageStatsProvider.notifier);
     usage
       ..count(UsageCount.turns)
@@ -187,7 +191,11 @@ void main() {
   });
 
   test('turned off, the server hears nothing', () async {
-    final c = await start({UsageStatsController.noticedKey: true});
+    final c = await start({
+      UsageStatsController.noticedKey: true,
+      UsageStatsController.enabledKey: true,
+      UsageStatsController.consentKey: true,
+    });
     final usage = c.read(usageStatsProvider.notifier);
     usage.count(UsageCount.turns);
     await settle();
