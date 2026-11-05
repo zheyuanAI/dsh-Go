@@ -252,7 +252,7 @@ class UsageStatsController extends Notifier<UsageStatsState> {
       _save();
       return;
     }
-    final service = await ref.read(siteServiceStatusProvider.future);
+    final service = await ref.read(siteServiceProbeProvider)();
     if (!ref.mounted || !state.collecting || !service.usage) return;
     final device = _device ??= await ref.read(usageDeviceProvider)();
     if (!ref.mounted || !state.collecting) return;
