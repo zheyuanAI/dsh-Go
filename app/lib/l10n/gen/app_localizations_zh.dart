@@ -16437,7 +16437,8 @@ class L10nZh extends L10n {
   String get usageStatsSection => '改进 DSH Go';
 
   @override
-  String get usageStatsFooter => '默认关闭。开启后向 go.dshtui.com 发送使用次数、设备概要和随机安装编号，不含对话正文或 API 密钥。';
+  String get usageStatsFooter =>
+      '默认关闭。开启后向 dsh-go-services.zheyuan1997.chatgpt.site 发送使用次数、设备概要和随机安装编号，不含对话正文或 API 密钥。';
 
   @override
   String get usageNoticeBody => '默认关闭，开启后发送使用概要';
@@ -16450,6 +16451,12 @@ class L10nZh extends L10n {
 
   @override
   String get usageUpgradeOff => '关闭';
+
+  @override
+  String get siteServiceUnavailable => '站点暂时无法连接，在线功能不可用。';
+
+  @override
+  String get siteServiceRetry => '重新检测';
 
   @override
   String viewArtifactSaved(String value) {

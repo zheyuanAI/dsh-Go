@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/l10n.dart';
+import '../services/site_service.dart';
 import '../phone/phone_channel.dart';
 import '../runtime/runtime_bridge.dart';
 import '../runtime/runtime_state.dart';
@@ -69,7 +70,7 @@ String? _engineMode(LocalRuntimeState s) =>
 
 class UsageStatsController extends Notifier<UsageStatsState> {
   static const enabledKey = 'usage_stats_enabled';
-  static const consentKey = 'usage_stats_opt_in_v1';
+  static const consentKey = 'usage_stats_opt_in_sites_v1';
   static const noticedKey = 'usage_stats_noticed';
   static const daysKey = 'usage_stats_days';
   static const iidKey = 'usage_stats_iid';
@@ -251,6 +252,8 @@ class UsageStatsController extends Notifier<UsageStatsState> {
       _save();
       return;
     }
+    final service = await ref.read(siteServiceStatusProvider.future);
+    if (!ref.mounted || !state.collecting || !service.usage) return;
     final device = _device ??= await ref.read(usageDeviceProvider)();
     if (!ref.mounted || !state.collecting) return;
     final iid = _currentIid(now);

@@ -116,7 +116,7 @@ class SharePanelHome extends StatelessWidget {
             key: const ValueKey('share-to-link'),
             icon: AppIcons.link,
             label: l10n.viewShareLink,
-            onTap: ready ? () => _open(context, (_) => const ShareLinkPage()) : null,
+            onTap: ready && model.serviceAvailable ? () => _open(context, (_) => const ShareLinkPage()) : null,
           ),
         ShareAction(
           key: const ValueKey('share-to-image'),
@@ -166,6 +166,11 @@ class SharePanelHome extends StatelessWidget {
             ),
           const SizedBox(height: 12),
           destinations,
+          if (model.linkMaker != null && !model.serviceAvailable)
+            TextButton(
+              onPressed: model.retryService,
+              child: Text('${l10n.siteServiceUnavailable} ${l10n.siteServiceRetry}'),
+            ),
         ],
       ),
     );
@@ -191,7 +196,11 @@ class _Placeholder extends StatelessWidget {
               )
             : SizedBox.square(
                 dimension: 22,
-                child: CircularProgressIndicator(strokeWidth: 2, strokeCap: StrokeCap.round, color: colors.textTertiary),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  strokeCap: StrokeCap.round,
+                  color: colors.textTertiary,
+                ),
               ),
       ),
     );
@@ -493,7 +502,7 @@ class _ShareLinkPageState extends State<ShareLinkPage> {
       action = FilledButton(
         key: const ValueKey('share-link-make'),
         style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(ShareActionBar.height)),
-        onPressed: busy || _confirmingUpload || tooLarge || built == null ? null : _makeLink,
+        onPressed: busy || _confirmingUpload || tooLarge || built == null || !model.serviceAvailable ? null : _makeLink,
         child: busy
             ? SizedBox.square(
                 dimension: 18,
@@ -636,8 +645,7 @@ class _ShareFilePageState extends State<ShareFilePage> {
     final idle = ready && !model.fileTooLarge;
     final progress = model.progress;
     final String? error =
-        model.error ??
-        (model.fileTooLarge ? l10n.viewShareTooLarge(maxConversationFileBytes ~/ (1024 * 1024)) : null);
+        model.error ?? (model.fileTooLarge ? l10n.viewShareTooLarge(maxConversationFileBytes ~/ (1024 * 1024)) : null);
     return SharePageLayout(
       title: l10n.viewShareAsFile,
       top: top,

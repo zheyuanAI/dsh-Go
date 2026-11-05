@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
+import '../../services/site_service.dart';
 import '../../share_code/conversation_export.dart';
 import '../../share_code/conversation_html.dart';
 import '../../share_code/conversation_redact.dart' show markdownWithoutImages, redactText;
@@ -168,6 +169,7 @@ class SharePanel extends ConsumerStatefulWidget {
 class _SharePanelState extends ConsumerState<SharePanel> {
   late final SharePanelModel _model;
   ProviderSubscription<ChatState>? _chat;
+  ProviderSubscription<AsyncValue<SiteServiceStatus>>? _service;
 
   @override
   void initState() {
@@ -179,6 +181,9 @@ class _SharePanelState extends ConsumerState<SharePanel> {
       clock: widget.clock ?? DateTime.now,
       loadImage: widget.loadImage,
     );
+    _service = ref.listenManual(siteServiceStatusProvider, (_, status) {
+      _model.serviceChanged(status.asData?.value.sharing ?? false);
+    }, fireImmediately: true);
     if (widget.subject case ConversationSubject(:final sessionId?, replay: null)) {
       // Held while the panel is up; history read for a whole conversation
       // arrives through it.
@@ -190,15 +195,18 @@ class _SharePanelState extends ConsumerState<SharePanel> {
   @override
   void dispose() {
     _chat?.close();
+    _service?.close();
     _model.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => SharePanelScope(
-    model: _model,
-    child: SheetNavigator(root: (_) => const SharePanelHome()),
-  );
+  Widget build(BuildContext context) {
+    return SharePanelScope(
+      model: _model,
+      child: SheetNavigator(root: (_) => const SharePanelHome()),
+    );
+  }
 }
 
 /// The panel's model for the pages under it.
@@ -244,6 +252,15 @@ enum ShareWork { text, link, saving, sharing }
 
 /// Everything the panel's pages show and do.
 class SharePanelModel extends ChangeNotifier {
+  bool _serviceAvailable = false;
+  bool get serviceAvailable => _serviceAvailable;
+  void serviceChanged(bool available) {
+    if (_serviceAvailable == available) return;
+    _serviceAvailable = available;
+    _notify();
+  }
+
+  void retryService() => _ref.invalidate(siteServiceStatusProvider);
   SharePanelModel({
     required this.subject,
     required this._ref,
@@ -351,7 +368,11 @@ class SharePanelModel extends ChangeNotifier {
   SharePrivacy get privacy => _privacy;
 
   /// The scopes this conversation offers: 「这条回复」 only with a reply.
-  List<ShareScope> get scopes => [if (conversation?.reply != null) ShareScope.reply, ShareScope.picked, ShareScope.whole];
+  List<ShareScope> get scopes => [
+    if (conversation?.reply != null) ShareScope.reply,
+    ShareScope.picked,
+    ShareScope.whole,
+  ];
 
   /// What 「选中消息」 starts with: the picks so far, else the reply and its
   /// question, else the last exchange.
@@ -418,13 +439,7 @@ class SharePanelModel extends ChangeNotifier {
     final state = chat;
     final reply = anchor;
     if (_scope == ShareScope.reply && reply != null) {
-      return shareContentForReply(
-        state,
-        reply,
-        sessionId: _sessionId,
-        images: _privacy.images,
-        tools: _privacy.tools,
-      );
+      return shareContentForReply(state, reply, sessionId: _sessionId, images: _privacy.images, tools: _privacy.tools);
     }
     return shareContentForItems(state, keys, sessionId: _sessionId, images: _privacy.images, tools: _privacy.tools);
   }
@@ -438,9 +453,7 @@ class SharePanelModel extends ChangeNotifier {
         if (keys.contains(item.key)) item,
     ];
     final whole = _scope == ShareScope.whole;
-    final turns = {
-      for (final reply in picked.whereType<AssistantChatItem>()) ?turnOf(state.turns, reply.seq),
-    };
+    final turns = {for (final reply in picked.whereType<AssistantChatItem>()) ?turnOf(state.turns, reply.seq)};
     var tools = 0;
     if (_privacy.tools) {
       for (final item in state.items) {
@@ -657,6 +670,7 @@ class SharePanelModel extends ChangeNotifier {
   ConversationLink? get stopped => _stopped;
 
   Future<void> makeLink() => _busy(ShareWork.link, () async {
+    if (!serviceAvailable) return;
     final maker = linkMaker;
     if (maker == null) return;
     final key = (_contentKey, _expiry);

@@ -11,6 +11,7 @@ import 'package:dsh_app/l10n/l10n.dart';
 import 'package:dsh_app/ui/onboarding/welcome_page.dart';
 import 'package:dsh_app/ui/settings/privacy_page.dart';
 import 'package:dsh_app/usage/usage_stats.dart';
+import 'package:dsh_app/services/site_service.dart';
 import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -31,6 +32,7 @@ Future<void> _pumpWelcome(
   double scale = 1,
   bool english = false,
   Brightness brightness = Brightness.light,
+  bool serviceAvailable = true,
 }) async {
   if (english) useEnglish();
   tester.view.devicePixelRatio = 2;
@@ -41,7 +43,13 @@ Future<void> _pumpWelcome(
   addTearDown(tester.view.reset);
   addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
   final page = WelcomePage(onStart: () {});
-  await tester.pumpWidget(goldenApp(home: english ? inEnglish(page) : page, brightness: brightness));
+  await tester.pumpWidget(
+    goldenApp(
+      home: english ? inEnglish(page) : page,
+      brightness: brightness,
+      overrides: [siteServiceProbeProvider.overrideWithValue(() async => SiteServiceStatus(usage: serviceAvailable))],
+    ),
+  );
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 600));
 }
@@ -55,6 +63,12 @@ Future<Map<String, Object?>> _stored() async {
 }
 
 void main() {
+  testWidgets('unreachable service disables opting in on the welcome screen', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await _pumpWelcome(tester, serviceAvailable: false);
+    expect(tester.widget<Switch>(find.byKey(_switch)).onChanged, isNull);
+    expect(_container(tester).read(usageStatsProvider).enabled, isFalse);
+  });
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   testWidgets('welcome, in English (light)', (tester) async {

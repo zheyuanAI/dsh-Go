@@ -30059,7 +30059,7 @@ abstract class L10n {
   /// No description provided for @usageStatsFooter.
   ///
   /// In zh, this message translates to:
-  /// **'默认关闭。开启后向 go.dshtui.com 发送使用次数、设备概要和随机安装编号，不含对话正文或 API 密钥。'**
+  /// **'默认关闭。开启后向 dsh-go-services.zheyuan1997.chatgpt.site 发送使用次数、设备概要和随机安装编号，不含对话正文或 API 密钥。'**
   String get usageStatsFooter;
 
   /// No description provided for @usageNoticeBody.
@@ -30085,6 +30085,18 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'关闭'**
   String get usageUpgradeOff;
+
+  /// No description provided for @siteServiceUnavailable.
+  ///
+  /// In zh, this message translates to:
+  /// **'站点暂时无法连接，在线功能不可用。'**
+  String get siteServiceUnavailable;
+
+  /// No description provided for @siteServiceRetry.
+  ///
+  /// In zh, this message translates to:
+  /// **'重新检测'**
+  String get siteServiceRetry;
 
   /// No description provided for @viewArtifactSaved.
   ///

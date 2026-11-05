@@ -38,6 +38,7 @@ Future<ProviderContainer> start({
   String? engine,
   PhoneChannel? phone,
   UsageDevice phoneFacts = testDevice,
+  bool serviceAvailable = true,
 }) async {
   SharedPreferences.setMockInitialValues(prefs);
   final container = ProviderContainer(
@@ -48,6 +49,7 @@ Future<ProviderContainer> start({
       engine: engine,
       phone: phone,
       device: phoneFacts,
+      serviceAvailable: serviceAvailable,
     ),
   );
   addTearDown(container.dispose);
@@ -87,6 +89,28 @@ void main() {
     resume = null;
   });
   tearDown(() => UsageBuild.active = wasActive);
+
+  test('an unreachable site never receives an opted-in report', () async {
+    final c = await start(prefs: noticed, serviceAvailable: false);
+    await c.count(UsageCount.turns);
+    now = DateTime(2026, 10, 29, 9);
+    await c.comeBack();
+    expect(http.requests, isEmpty);
+  });
+
+  test('moving from the previous fork endpoint requires fresh consent', () async {
+    final c = await start(
+      prefs: {
+        UsageStatsController.enabledKey: true,
+        UsageStatsController.noticedKey: true,
+        'usage_stats_opt_in_v1': true,
+        UsageStatsController.iidKey: 'old-install-id',
+      },
+    );
+    expect(c.read(usageStatsProvider).enabled, isFalse);
+    expect((await stored()).containsKey(UsageStatsController.iidKey), isFalse);
+    expect(http.requests, isEmpty);
+  });
 
   test('nothing is counted or sent until explicit opt-in, even after seeing the switch', () async {
     final c = await start();
@@ -370,7 +394,7 @@ void main() {
     now = DateTime(2026, 10, 29, 9);
     await c.comeBack();
 
-    expect(http.urls.single, Uri.parse('https://go.dshtui.com/api/usage/v1'));
+    expect(http.urls.single, Uri.parse('https://dsh-go-services.zheyuan1997.chatgpt.site/api/usage/v1'));
     final body = http.requests.single;
     expect(body.keys.toSet(), usagePayloadKeys);
     final counts = body['counts']! as Map<String, Object?>;

@@ -1,9 +1,11 @@
 {
   "usageStatsTitle": "Send anonymous usage stats",
   "usageStatsSection": "Improve DSH Go",
-  "usageStatsFooter": "Off by default. Sends usage counts, device details and a random install ID to go.dshtui.com when enabled. No chat text or API keys.",
+  "usageStatsFooter": "Off by default. When enabled, sends usage counts, device details and a random install ID to dsh-go-services.zheyuan1997.chatgpt.site. No chat text or API keys.",
   "usageNoticeBody": "Off by default.\nEnable to send usage summaries.",
   "usageUpgradeNotice": "New: anonymous usage stats, to help improve DSH Go.\nNo chats or personal info.",
   "usageUpgradeLearn": "Learn more",
-  "usageUpgradeOff": "Turn off"
+  "usageUpgradeOff": "Turn off",
+  "siteServiceUnavailable": "The site is unreachable. Online features are unavailable.",
+  "siteServiceRetry": "Check again"
 }

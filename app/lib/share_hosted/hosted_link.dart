@@ -113,7 +113,7 @@ class HostedLink {
       createdAt: created,
       ttl: HostedTtl.parse(json['ttl'] as String?),
       expiresAt: expires is String ? DateTime.tryParse(expires) : null,
-      origin: origin is String && origin.startsWith('https://') ? origin : shareHostOrigin,
+      origin: origin is String && origin.startsWith('https://') ? origin : legacyShareHostOrigin,
       deleting: json['deleting'] == true,
     );
   }
@@ -121,7 +121,7 @@ class HostedLink {
 
 /// Share hosts whose links the app opens itself (a link names where its
 /// ciphertext is, so only our own hosts are fetched from).
-const hostedOrigins = [shareHostOrigin];
+const hostedOrigins = [shareHostOrigin, legacyShareHostOrigin];
 
 /// The id and key in a hosted link: `https://<host>/c/<id>#k=<key>`, or the
 /// same as an app link, `dshgo://<host>/c/<id>#k=<key>` (what the web viewer's

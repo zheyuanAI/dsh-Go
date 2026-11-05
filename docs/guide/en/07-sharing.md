@@ -17,7 +17,7 @@ Touching and holding a chat in the chat list, or choosing **Share** in a deliver
 
 ### Link
 
-Creating a link requires confirmation to upload to go.dshtui.com. Confirming uploads an encrypted copy of the selected content; canceling uploads nothing. Anyone with the full link can decrypt it. Choose **7 days**, **30 days** (default) or **Forever** and tap **Create link**. Then **Copy link**, show the **QR code**, **Share** it, or **Stop sharing**: after you confirm, you have 4 seconds to tap **Undo**. If you don't, deletion starts after that window; the link stops working once deletion succeeds.
+Creating a link requires confirmation to upload to dsh-go-services.zheyuan1997.chatgpt.site. Confirming uploads an encrypted copy of the selected content; canceling uploads nothing. Anyone with the full link can decrypt it. Choose **7 days**, **30 days** (default) or **Forever** and tap **Create link**. Then **Copy link**, show the **QR code**, **Share** it, or **Stop sharing**: after you confirm, you have 4 seconds to tap **Undo**. If you don't, deletion starts after that window; the link stops working once deletion succeeds.
 
 ### Image
 
@@ -53,3 +53,5 @@ Open a `.dshgo` file or DSH Go share link with DSH Go to replay it:
 - Tap **Continue chat** to start a new chat with this replay attached as a Markdown transcript (one summary line per tool call, without thinking or tool output) and a line ready in the composer. Check it, then send. Files and tool state from the original chat aren't restored.
 
 **Continue chat** isn't shown in the preview of your own share. If the current DSH Remote host does not support file uploads, the transcript is dropped. Otherwise it is uploaded to the current workspace when you send, subject to the normal attachment limit and the host's actual limits.
+
+When the site is unreachable, online link creation is disabled and you can check again. Image, file and text exports remain available.

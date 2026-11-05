@@ -34,7 +34,7 @@ void main() {
   group('landing page', () {
     test('lives on the share host; old github.io links still read', () {
       expect(shareLandingUrl, '$shareHostOrigin/share/');
-      expect(shareLandingUrl, 'https://go.dshtui.com/share/');
+      expect(shareLandingUrl, 'https://dsh-go-services.zheyuan1997.chatgpt.site/share/');
       const code = 'abc123.ABCDEFGH';
       for (final base in [shareLandingUrl, ...legacyShareLandingUrls]) {
         final uri = Uri.parse('$base#p=$code');
@@ -46,7 +46,7 @@ void main() {
       expect(isLandingUri(Uri.parse('https://go.dshtui.com/c/')), isFalse);
       expect(
         ShareLink.inline(ShareLink.parse(Uri.parse('dshgo://share/plugin?p=$code'))!.kind!, code).webLink,
-        startsWith('https://go.dshtui.com/share/#p='),
+        startsWith('$shareHostOrigin/share/#p='),
       );
     });
   });

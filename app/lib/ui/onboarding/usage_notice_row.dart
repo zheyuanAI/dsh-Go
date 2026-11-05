@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../../usage/usage_stats.dart';
+import '../../services/site_service.dart';
 import '../settings/settings_widgets.dart';
 import '../theme/theme.dart';
 
@@ -42,11 +43,13 @@ class _UsageNoticeRowState extends ConsumerState<UsageNoticeRow> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final enabled = ref.watch(usageStatsProvider.select((s) => s.enabled));
+    final available = ref.watch(siteServiceStatusProvider).asData?.value.usage ?? false;
+    final canChange = available || enabled;
     return MergeSemantics(
       child: GestureDetector(
         key: const ValueKey('usage-notice'),
         behavior: HitTestBehavior.opaque,
-        onTap: () => _set(!enabled),
+        onTap: canChange ? () => _set(!enabled) : null,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(SettingsMetrics.inset, 0, SettingsMetrics.trailingPad, 0),
           child: Row(
@@ -62,7 +65,7 @@ class _UsageNoticeRowState extends ConsumerState<UsageNoticeRow> {
                     ),
                     const SizedBox(height: 1),
                     Text(
-                      l10n.usageNoticeBody,
+                      available ? l10n.usageNoticeBody : l10n.siteServiceUnavailable,
                       style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
                     ),
                   ],
@@ -71,7 +74,11 @@ class _UsageNoticeRowState extends ConsumerState<UsageNoticeRow> {
               const SizedBox(width: 12),
               SwitchTheme(
                 data: SwitchTheme.of(context).copyWith(materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                child: Switch(key: const ValueKey('usage-notice-switch'), value: enabled, onChanged: _set),
+                child: Switch(
+                  key: const ValueKey('usage-notice-switch'),
+                  value: enabled,
+                  onChanged: canChange ? _set : null,
+                ),
               ),
             ],
           ),

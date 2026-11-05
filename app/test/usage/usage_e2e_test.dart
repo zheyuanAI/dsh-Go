@@ -15,6 +15,7 @@ import 'package:dsh_app/state/phone_state.dart' show phoneChannelProvider;
 import 'package:dsh_app/usage/usage_ledger.dart';
 import 'package:dsh_app/usage/usage_net.dart';
 import 'package:dsh_app/usage/usage_stats.dart';
+import 'package:dsh_app/services/site_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -78,6 +79,7 @@ void main() {
     SharedPreferences.setMockInitialValues(prefs);
     final container = ProviderContainer(
       overrides: [
+        siteServiceProbeProvider.overrideWithValue(() async => const SiteServiceStatus(usage: true)),
         usageClockProvider.overrideWithValue(() => now),
         usageEndpointProvider.overrideWithValue(Uri.parse('http://127.0.0.1:${server.port}/api/usage/v1')),
         usageDeviceProvider.overrideWithValue(

@@ -17338,7 +17338,7 @@ class L10nEn extends L10n {
 
   @override
   String get usageStatsFooter =>
-      'Off by default. Sends usage counts, device details and a random install ID to go.dshtui.com when enabled. No chat text or API keys.';
+      'Off by default. When enabled, sends usage counts, device details and a random install ID to dsh-go-services.zheyuan1997.chatgpt.site. No chat text or API keys.';
 
   @override
   String get usageNoticeBody => 'Off by default.\nEnable to send usage summaries.';
@@ -17351,6 +17351,12 @@ class L10nEn extends L10n {
 
   @override
   String get usageUpgradeOff => 'Turn off';
+
+  @override
+  String get siteServiceUnavailable => 'The site is unreachable. Online features are unavailable.';
+
+  @override
+  String get siteServiceRetry => 'Check again';
 
   @override
   String viewArtifactSaved(String value) {

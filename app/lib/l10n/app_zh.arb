@@ -10373,11 +10373,13 @@
   },
   "usageStatsTitle": "发送匿名使用统计",
   "usageStatsSection": "改进 DSH Go",
-  "usageStatsFooter": "默认关闭。开启后向 go.dshtui.com 发送使用次数、设备概要和随机安装编号，不含对话正文或 API 密钥。",
+  "usageStatsFooter": "默认关闭。开启后向 dsh-go-services.zheyuan1997.chatgpt.site 发送使用次数、设备概要和随机安装编号，不含对话正文或 API 密钥。",
   "usageNoticeBody": "默认关闭，开启后发送使用概要",
   "usageUpgradeNotice": "新增匿名使用统计，帮助改进 DSH Go。\n不含对话和个人信息",
   "usageUpgradeLearn": "了解",
   "usageUpgradeOff": "关闭",
+  "siteServiceUnavailable": "站点暂时无法连接，在线功能不可用。",
+  "siteServiceRetry": "重新检测",
   "viewArtifactSaved": "已存到 {value}",
   "@viewArtifactSaved": {
     "placeholders": {

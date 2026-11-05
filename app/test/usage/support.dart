@@ -12,6 +12,7 @@ import 'package:dsh_app/state/phone_state.dart' show phoneChannelProvider;
 import 'package:dsh_app/usage/usage_ledger.dart';
 import 'package:dsh_app/usage/usage_net.dart';
 import 'package:dsh_app/usage/usage_stats.dart';
+import 'package:dsh_app/services/site_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
@@ -68,7 +69,11 @@ List<Override> usageOverrides({
   UsageDevice device = testDevice,
   String lang = 'zh',
   LocalRuntimeState? runtime,
+  bool serviceAvailable = true,
 }) => [
+  siteServiceProbeProvider.overrideWithValue(
+    () async => SiteServiceStatus(sharing: serviceAvailable, usage: serviceAvailable),
+  ),
   usageClockProvider.overrideWithValue(clock),
   usageHttpProvider.overrideWithValue(http),
   usageDeviceProvider.overrideWithValue(() async => device),

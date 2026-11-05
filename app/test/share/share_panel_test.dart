@@ -11,12 +11,14 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:dsh_app/runtime/runtime_state.dart';
+import 'package:dsh_app/services/site_service.dart';
 import 'package:dsh_app/share_code/conversation_share.dart';
 import 'package:dsh_app/state/artifacts.dart' show FilesChannel;
 import 'package:dsh_app/state/chat_state.dart';
 import 'package:dsh_app/state/connection_state.dart';
 import 'package:dsh_app/state/settings_state.dart';
 import 'package:dsh_app/ui/common/app_sheet.dart';
+import 'package:dsh_app/ui/common/pressable.dart';
 import 'package:dsh_app/ui/common/segmented_pill.dart';
 import 'package:dsh_app/ui/replay/conversation_out.dart';
 import 'package:dsh_app/ui/replay/replay_page.dart';
@@ -143,6 +145,7 @@ Future<_Panel> _open(
   String? reply = 'first',
   ShareScope? scope,
   bool links = true,
+  Future<SiteServiceStatus> Function()? serviceProbe,
   double textScale = 1,
   Size? size,
 }) async {
@@ -190,6 +193,9 @@ Future<_Panel> _open(
       ),
       brightness: brightness,
       overrides: [
+        siteServiceProbeProvider.overrideWithValue(
+          serviceProbe ?? () async => const SiteServiceStatus(sharing: true, usage: true),
+        ),
         settingsProvider.overrideWith(() => TestSettings()),
         // No engine: pictures in replies give up at once.
         activeConnectionProvider.overrideWithValue(const AsyncData<HostConnection?>(null)),
@@ -260,6 +266,22 @@ void _expectWhole(WidgetTester tester, String text) {
 }
 
 void main() {
+  testWidgets('unreachable sharing is disabled and manual recheck restores it', (tester) async {
+    var reachable = false;
+    final panel = await _open(tester, serviceProbe: () async => SiteServiceStatus(sharing: reachable));
+    final action = find.byKey(const ValueKey('share-to-link'));
+    expect(tester.widget<Pressable>(action).enabled, isFalse);
+    await tester.tap(action);
+    await tester.pumpAndSettle();
+    expect(panel.links.uploads, isEmpty);
+    expect(find.byType(ShareLinkPage), findsNothing);
+    reachable = true;
+    await tester.tap(find.textContaining('重新检测'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<Pressable>(action).enabled, isTrue);
+    await _key(tester, 'share-to-link');
+    expect(find.byType(ShareLinkPage), findsOneWidget);
+  });
   for (final scale in [1.0, 2.0]) {
     testWidgets('link upload requires confirmation at $scale×; cancel and dismiss send nothing', (tester) async {
       final panel = await _open(tester, textScale: scale, size: const Size(320, 640));
@@ -267,7 +289,7 @@ void main() {
       final make = find.byKey(const ValueKey('share-link-make'));
       await _tap(tester, make);
       expect(panel.links.uploads, isEmpty);
-      expect(find.textContaining('go.dshtui.com'), findsOneWidget);
+      expect(find.textContaining('dsh-go-services.zheyuan1997.chatgpt.site'), findsOneWidget);
       expect(find.textContaining('任何拿到完整链接的人'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await _tap(tester, find.text('取消'));
@@ -574,9 +596,7 @@ void main() {
     expect(tester.widget<ReplayPage>(find.byType(ReplayPage)).preview, isTrue);
   });
 
-  testWidgets('over the limit: the file and the link say so and nothing goes out; Markdown still does', (
-    tester,
-  ) async {
+  testWidgets('over the limit: the file and the link say so and nothing goes out; Markdown still does', (tester) async {
     final random = Random(7);
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     final noise = String.fromCharCodes(List.generate(5200000, (_) => alphabet.codeUnitAt(random.nextInt(64))));
@@ -703,7 +723,8 @@ void main() {
     await _open(tester);
     final sheet = tester.getRect(find.byType(SharePanel));
     final keys = [
-      for (final k in ['share-to-link', 'share-to-image', 'share-to-file', 'share-to-text']) tester.getRect(find.byKey(ValueKey(k))),
+      for (final k in ['share-to-link', 'share-to-image', 'share-to-file', 'share-to-text'])
+        tester.getRect(find.byKey(ValueKey(k))),
     ];
     for (final cell in keys) {
       expect(cell.width, moreOrLessEquals(keys.first.width));
@@ -730,7 +751,9 @@ void main() {
     for (final label in ['思考过程', '工具调用', '图片']) {
       final capsule = tester.getRect(find.byKey(ValueKey('share-toggle-$label')));
       final check = tester.getRect(find.byKey(ValueKey('share-toggle-check-$label')));
-      final text = tester.getRect(find.descendant(of: find.byKey(ValueKey('share-privacy')), matching: find.text(label)));
+      final text = tester.getRect(
+        find.descendant(of: find.byKey(ValueKey('share-privacy')), matching: find.text(label)),
+      );
       expect(capsule.height, ShareToggle.height);
       expect(check.left - capsule.left, moreOrLessEquals(ShareToggle.padding));
       expect(capsule.right - text.right, moreOrLessEquals(ShareToggle.padding));
@@ -744,7 +767,9 @@ void main() {
     // Off: no check, the same air.
     await _tap(tester, find.byKey(const ValueKey('share-toggle-图片')));
     final capsule = tester.getRect(find.byKey(const ValueKey('share-toggle-图片')));
-    final text = tester.getRect(find.descendant(of: find.byKey(const ValueKey('share-privacy')), matching: find.text('图片')));
+    final text = tester.getRect(
+      find.descendant(of: find.byKey(const ValueKey('share-privacy')), matching: find.text('图片')),
+    );
     expect(text.left - capsule.left, moreOrLessEquals(ShareToggle.padding));
     expect(capsule.right - text.right, moreOrLessEquals(ShareToggle.padding));
   });
@@ -764,9 +789,7 @@ void main() {
     expect(adjust.center.dy, moreOrLessEquals(after.center.dy, epsilon: 0.5));
   });
 
-  testWidgets('文件 and 链接 buttons: equal halves 12 apart on the 20 gutter; the make button full width', (
-    tester,
-  ) async {
+  testWidgets('文件 and 链接 buttons: equal halves 12 apart on the 20 gutter; the make button full width', (tester) async {
     await _open(tester, state: _fixture(), reply: 'a6');
     final sheet = tester.getRect(find.byType(SharePanel));
     await _key(tester, 'share-to-file');
