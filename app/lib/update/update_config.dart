@@ -1,9 +1,8 @@
 /// Where in-app updates come from. Everything network-facing about updates is
 /// configured here; the conventions and trade-offs are in `docs/release.md`.
 ///
-/// Every build asks our own copy of the release files first
-/// ([updateDownloadOrigin]: `/update.json`, `/download/<version>/<file>`), then
-/// GitHub and the public accelerators, and the rate-limited GitHub API last.
+/// This fork asks its GitHub release assets, then the GitHub API. Hosted
+/// mirrors, accelerators and the beta channel require explicit build overrides.
 /// Beta builds carry a channel token (`--dart-define=DSH_BETA_CHANNEL_TOKEN`,
 /// put in by `tooling/build-apk.sh`): they ask the beta channel before all of
 /// that ([UpdateChannel], `go.dshtui.com/beta/update.json`,
@@ -21,7 +20,7 @@
 library;
 
 /// GitHub repository the releases live in.
-const updateRepo = 'ccch1mneyyy/dsh-go';
+const updateRepo = 'zheyuanAI/dsh-Go';
 
 /// `releases/latest` of the REST API: tag, notes, assets with sizes and
 /// SHA-256 digests. Unauthenticated: 60 requests per hour per IP.
@@ -145,11 +144,11 @@ const publicMirrors = [
 ];
 
 const _unset = '\u0000';
-const _mirrorDefine = String.fromEnvironment('DSH_UPDATE_MIRROR', defaultValue: updateDownloadOrigin);
+const _mirrorDefine = String.fromEnvironment('DSH_UPDATE_MIRROR');
 const _feedDefine = String.fromEnvironment('DSH_UPDATE_FEED', defaultValue: _unset);
-const _mirrorsDefine = String.fromEnvironment('DSH_UPDATE_MIRRORS', defaultValue: _unset);
+const _mirrorsDefine = String.fromEnvironment('DSH_UPDATE_MIRRORS');
 const _betaTokenDefine = String.fromEnvironment('DSH_BETA_CHANNEL_TOKEN');
-const _betaOriginDefine = String.fromEnvironment('DSH_BETA_CHANNEL_ORIGIN', defaultValue: updateMirrorOrigin);
+const _betaOriginDefine = String.fromEnvironment('DSH_BETA_CHANNEL_ORIGIN');
 
 /// The configuration the app ships with (see the library comment for overrides).
 UpdateSources defaultUpdateSources() => buildUpdateSources(

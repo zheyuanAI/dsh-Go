@@ -1,6 +1,6 @@
 {
-  "url": "https://api.github.com/repos/ccch1mneyyy/dsh-go/releases/250000001",
-  "html_url": "https://github.com/ccch1mneyyy/dsh-go/releases/tag/v1.2.0",
+  "url": "https://api.github.com/repos/zheyuanAI/dsh-Go/releases/250000001",
+  "html_url": "https://github.com/zheyuanAI/dsh-Go/releases/tag/v1.2.0",
   "id": 250000001,
   "tag_name": "v1.2.0",
   "target_commitish": "main",
@@ -11,7 +11,7 @@
   "published_at": "2026-11-01T08:00:00Z",
   "assets": [
     {
-      "url": "https://api.github.com/repos/ccch1mneyyy/dsh-go/releases/assets/300000001",
+      "url": "https://api.github.com/repos/zheyuanAI/dsh-Go/releases/assets/300000001",
       "id": 300000001,
       "name": "dsh-go-1.2.0-arm64.apk",
       "label": "",
@@ -22,10 +22,10 @@
       "download_count": 12,
       "created_at": "2026-11-01T07:50:00Z",
       "updated_at": "2026-11-01T07:51:00Z",
-      "browser_download_url": "https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/dsh-go-1.2.0-arm64.apk"
+      "browser_download_url": "https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0/dsh-go-1.2.0-arm64.apk"
     },
     {
-      "url": "https://api.github.com/repos/ccch1mneyyy/dsh-go/releases/assets/300000002",
+      "url": "https://api.github.com/repos/zheyuanAI/dsh-Go/releases/assets/300000002",
       "id": 300000002,
       "name": "dsh-go-1.2.0-x64.apk",
       "label": "",
@@ -36,29 +36,29 @@
       "download_count": 1,
       "created_at": "2026-11-01T07:50:00Z",
       "updated_at": "2026-11-01T07:51:00Z",
-      "browser_download_url": "https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/dsh-go-1.2.0-x64.apk"
+      "browser_download_url": "https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0/dsh-go-1.2.0-x64.apk"
     },
     {
-      "url": "https://api.github.com/repos/ccch1mneyyy/dsh-go/releases/assets/300000003",
+      "url": "https://api.github.com/repos/zheyuanAI/dsh-Go/releases/assets/300000003",
       "id": 300000003,
       "name": "SHA256SUMS",
       "content_type": "text/plain",
       "state": "uploaded",
       "size": 172,
       "digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
-      "browser_download_url": "https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/SHA256SUMS"
+      "browser_download_url": "https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0/SHA256SUMS"
     },
     {
-      "url": "https://api.github.com/repos/ccch1mneyyy/dsh-go/releases/assets/300000004",
+      "url": "https://api.github.com/repos/zheyuanAI/dsh-Go/releases/assets/300000004",
       "id": 300000004,
       "name": "update.json",
       "content_type": "application/json",
       "state": "uploaded",
       "size": 812,
-      "browser_download_url": "https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/update.json"
+      "browser_download_url": "https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0/update.json"
     }
   ],
-  "tarball_url": "https://api.github.com/repos/ccch1mneyyy/dsh-go/tarball/v1.2.0",
-  "zipball_url": "https://api.github.com/repos/ccch1mneyyy/dsh-go/zipball/v1.2.0",
+  "tarball_url": "https://api.github.com/repos/zheyuanAI/dsh-Go/tarball/v1.2.0",
+  "zipball_url": "https://api.github.com/repos/zheyuanAI/dsh-Go/zipball/v1.2.0",
   "body": "## 新功能\r\n\r\n- 应用内更新：设置 → 关于 → 检查更新\r\n- 聊天里的代码块可以横向滚动\r\n\r\n## 修复\r\n\r\n- 修复了切换对话时偶尔丢失草稿的问题"
 }

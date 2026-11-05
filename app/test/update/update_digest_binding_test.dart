@@ -27,10 +27,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'support.dart';
 
 const _sources = UpdateSources(mirrors: [UpdateMirror.github]);
-const _manifest = 'https://github.com/ccch1mneyyy/dsh-go/releases/latest/download/update.json';
+const _manifest = 'https://github.com/zheyuanAI/dsh-Go/releases/latest/download/update.json';
 const _name = 'dsh-go-1.2.0-arm64.apk';
-const _asset = 'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/$_name';
-const _sums = 'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/SHA256SUMS';
+const _asset = 'https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0/$_name';
+const _sums = 'https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0/SHA256SUMS';
 
 final _bytesA = utf8.encode('PK synthetic release payload alpha');
 final _bytesB = utf8.encode('PK synthetic release payload bravo');

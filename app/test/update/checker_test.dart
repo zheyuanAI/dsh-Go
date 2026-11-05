@@ -11,8 +11,8 @@ const _mirrors = [
   UpdateMirror(id: 'm2', label: 'mirror-two.example', prefix: 'https://mirror-two.example/'),
 ];
 
-const _api = 'https://api.github.com/repos/ccch1mneyyy/dsh-go/releases/latest';
-const _manifest = 'https://github.com/ccch1mneyyy/dsh-go/releases/latest/download/update.json';
+const _api = 'https://api.github.com/repos/zheyuanAI/dsh-Go/releases/latest';
+const _manifest = 'https://github.com/zheyuanAI/dsh-Go/releases/latest/download/update.json';
 const _m1 = 'https://mirror-one.example/$_manifest';
 const _m2 = 'https://mirror-two.example/$_manifest';
 const _feed = 'https://update.example.com/dsh/update.json';
@@ -47,7 +47,7 @@ void main() {
     });
 
     test('downloads: each GitHub URL through every mirror, preferred mirror first, others as they are', () {
-      final asset = Uri.parse('https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/a.apk');
+      final asset = Uri.parse('https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0/a.apk');
       final cdn = Uri.parse('https://cdn.example.com/a.apk');
       final urls = sources.downloadUrls([cdn, asset, asset], preferredMirror: 'm1');
       expect(urls.map((u) => u.url.toString()), [

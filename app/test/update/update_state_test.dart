@@ -15,9 +15,9 @@ import 'support.dart';
 
 const _m1 = UpdateMirror(id: 'm1', label: 'mirror-one.example', prefix: 'https://mirror-one.example/');
 const _sources = UpdateSources(mirrors: [UpdateMirror.github, _m1]);
-const _api = 'https://api.github.com/repos/ccch1mneyyy/dsh-go/releases/latest';
-const _manifest = 'https://github.com/ccch1mneyyy/dsh-go/releases/latest/download/update.json';
-const _apkUrl = 'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/dsh-go-1.2.0-arm64.apk';
+const _api = 'https://api.github.com/repos/zheyuanAI/dsh-Go/releases/latest';
+const _manifest = 'https://github.com/zheyuanAI/dsh-Go/releases/latest/download/update.json';
+const _apkUrl = 'https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0/dsh-go-1.2.0-arm64.apk';
 
 final _apk = utf8.encode('PK pretend this is DSH 1.2.0 for arm64');
 

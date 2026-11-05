@@ -12,10 +12,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';
 
-const _api = 'https://api.github.com/repos/ccch1mneyyy/dsh-go/releases/latest';
+const _api = 'https://api.github.com/repos/zheyuanAI/dsh-Go/releases/latest';
 const _apk = 'dsh-go-0.9.0-arm64.apk';
-const _githubApk = 'https://github.com/ccch1mneyyy/dsh-go/releases/download/v0.9.0/$_apk';
-const _manifest = 'https://github.com/ccch1mneyyy/dsh-go/releases/latest/download/update.json';
+const _githubApk = 'https://github.com/zheyuanAI/dsh-Go/releases/download/v0.9.0/$_apk';
+const _manifest = 'https://github.com/zheyuanAI/dsh-Go/releases/latest/download/update.json';
 const _dlFeed = 'https://dl.dshtui.com/update.json';
 const _dlApk = 'https://dl.dshtui.com/download/0.9.0/$_apk';
 const _mirror = 'https://dl.example.com';
@@ -46,12 +46,20 @@ void main() {
       expect([for (final e in endpoints) e.url.host], isNot(contains('go.dshtui.com')));
     });
 
-    test('the shipped configuration (no token in tests) is the same', () {
+    test('the shipped fork uses only its own GitHub repository', () {
       final shipped = defaultUpdateSources();
       expect(shipped.channel, isNull);
-      expect(shipped.feed.toString(), _dlFeed);
-      expect(shipped.metadataEndpoints().map((e) => e.id), sources.metadataEndpoints().map((e) => e.id));
-      expect(shipped.mirrors.map((m) => m.id), sources.mirrors.map((m) => m.id));
+      expect(shipped.feed, isNull);
+      expect(updateRepo, 'zheyuanAI/dsh-Go');
+      expect(shipped.mirrors.map((m) => m.id), ['github']);
+      expect(shipped.metadataEndpoints().map((e) => e.url.toString()), [
+        'https://github.com/zheyuanAI/dsh-Go/releases/latest/download/update.json',
+        'https://api.github.com/repos/zheyuanAI/dsh-Go/releases/latest',
+      ]);
+      expect(shipped.downloadUrls([githubReleaseAsset('v0.9.0', _apk)]).map((u) => u.url.toString()), [
+        'https://github.com/zheyuanAI/dsh-Go/releases/download/v0.9.0/$_apk',
+      ]);
+      expect(githubReleasesPage.toString(), 'https://github.com/zheyuanAI/dsh-Go/releases/latest');
     });
 
     test('the API is not moved ahead by having answered last time; the others are', () {

@@ -23,11 +23,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'support.dart';
 
 const _sources = UpdateSources(mirrors: [UpdateMirror.github]);
-const _manifest = 'https://github.com/ccch1mneyyy/dsh-go/releases/latest/download/update.json';
+const _manifest = 'https://github.com/zheyuanAI/dsh-Go/releases/latest/download/update.json';
 
 String _apkName(String version) => 'dsh-go-$version-arm64.apk';
 String _apkUrl(String version) =>
-    'https://github.com/ccch1mneyyy/dsh-go/releases/download/v$version/${_apkName(version)}';
+    'https://github.com/zheyuanAI/dsh-Go/releases/download/v$version/${_apkName(version)}';
 
 /// Different bytes per version, so the hashes differ too.
 List<int> _apk(String version) => utf8.encode('PK pretend this is DSH $version for arm64');

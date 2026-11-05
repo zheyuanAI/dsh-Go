@@ -505,3 +505,8 @@ App 这边（`app/lib/update/delta.dart`、`app/lib/state/update_state.dart`）�
 - [ ] 下载中切到后台、断网再恢复、杀进程后重进：都能续传
 - [ ] 国产 ROM（vivo / 小米 / 华为）：自带的安装拦截页、「安全安装」流程不会让 App 卡在「安装中」（App 回到前台 3 秒后会自动放开）
 - [ ] 公共镜像实测可用；GitHub 不通时能回落
+# Fork 更新来源 / Fork update sources
+
+本 fork 默认从 `zheyuanAI/dsh-Go` 的 GitHub Releases 查询版本并下载 APK，仅使用 GitHub 直连。自有更新镜像、公共加速镜像和内测通道需要显式构建配置。发布更新时，将 APK 和 `update.json` / `SHA256SUMS` 上传到本仓库 Release，并沿用同一签名密钥。仅推送源码不会生成可供应用更新的 Release。
+
+This fork checks and downloads releases from `zheyuanAI/dsh-Go` on GitHub directly. Hosted mirrors, accelerators and beta channels require explicit build configuration. Attach the APK and `update.json` / `SHA256SUMS` to this repository's release and retain the same signing key. Pushing source commits alone does not publish an app update.

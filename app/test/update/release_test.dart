@@ -17,7 +17,7 @@ void main() {
       expect(release.notes, startsWith('## 新功能\n\n- 应用内更新'));
       expect(release.notes, isNot(contains('\r')));
       expect(release.publishedAt, DateTime.utc(2026, 11, 1, 8));
-      expect(release.pageUrl.toString(), 'https://github.com/ccch1mneyyy/dsh-go/releases/tag/v1.2.0');
+      expect(release.pageUrl.toString(), 'https://github.com/zheyuanAI/dsh-Go/releases/tag/v1.2.0');
       expect(release.checksumsUrl.toString(), endsWith('/v1.2.0/SHA256SUMS'));
     });
 
@@ -28,7 +28,7 @@ void main() {
       expect(arm.sha256, '3a8498bcf7d895bac5c9f2f02829c9ec7064cd8bc7ef9f1792f28277d44839f2');
       expect(
         arm.url.toString(),
-        'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/dsh-go-1.2.0-arm64.apk',
+        'https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0/dsh-go-1.2.0-arm64.apk',
       );
       final x64 = release.apkFor(ApkFlavor.x64)!;
       expect(x64.name, 'dsh-go-1.2.0-x64.apk');
@@ -66,7 +66,7 @@ void main() {
       final arm = release.apkFor(ApkFlavor.arm64)!;
       expect(
         arm.url.toString(),
-        'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/dsh-go-1.2.0-arm64.apk',
+        'https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0/dsh-go-1.2.0-arm64.apk',
       );
       expect(arm.sha256, hasLength(64));
       expect(arm.size, 14);

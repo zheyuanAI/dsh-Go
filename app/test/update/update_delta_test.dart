@@ -29,7 +29,7 @@ const _apk = 'dsh-go-1.2.0-arm64.apk';
 const _patchName = 'dsh-go-1.0.0-to-1.2.0-arm64.dshdlt';
 const _feed = 'https://dl.dshtui.com/update.json';
 const _dl = 'https://dl.dshtui.com/download/1.2.0';
-const _github = 'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0';
+const _github = 'https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0';
 
 final _old = utf8.encode('PK the installed 1.0.0, ${'resources ' * 300}${'classes ' * 300}');
 final _new = [..._old.sublist(0, 2000), ...utf8.encode('the 1.2.0 code'), ..._old.sublist(2400)];

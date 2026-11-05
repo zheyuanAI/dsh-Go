@@ -19,10 +19,10 @@ import 'support.dart';
 const _token = 'dshc_0123456789abcdefghijklmnopqrstuvwxyzABCDEFG';
 const _auth = 'Bearer $_token';
 const _feed = 'https://go.dshtui.com/beta/update.json';
-const _api = 'https://api.github.com/repos/ccch1mneyyy/dsh-go/releases/latest';
+const _api = 'https://api.github.com/repos/zheyuanAI/dsh-Go/releases/latest';
 const _apk = 'dsh-go-1.2.0-arm64.apk';
 const _betaApk = 'https://go.dshtui.com/beta/1.2.0/$_apk';
-const _githubApk = 'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/$_apk';
+const _githubApk = 'https://github.com/zheyuanAI/dsh-Go/releases/download/v1.2.0/$_apk';
 const _dlFeed = 'https://dl.dshtui.com/update.json';
 
 final _bytes = utf8.encode('PK pretend this is the 1.2.0 beta for arm64');
