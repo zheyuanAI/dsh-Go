@@ -277,6 +277,18 @@
           "before": "99b5c20830a52f69641df8a18a39206079b0c725201958cce2c4a934f1d4f7cd"
         }
       }
+    },
+    "disable-deepseek-session-log.diff": {
+      "0.2.1-rc.4": {
+        "node_modules/@deepseek-ai/dsh-deepseek-llm-api-extensions/lib/index.js": {
+          "before": "75682373a56794240b8e7dd08fa363c528a86a0d626007cb849c3b74f7754b6a",
+          "after": "a6f87c61a4373f23ce5acc9c29f205983f22245e2e10abea20c1e7d9cac53195"
+        },
+        "node_modules/@deepseek-ai/dsh-session-log-deepseek/lib/index.js": {
+          "before": "09171c53502b4c4a78a458dea8f94884107bc252239c4d12193acd46951d2e72",
+          "after": "b95f93cd3b614ba1216f466236692a30e9f88181a9fe24bc8a38109dc2d46f4f"
+        }
+      }
     }
   },
   "schema": 1
